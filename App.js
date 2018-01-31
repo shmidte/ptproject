@@ -1,57 +1,66 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- * @flow
- */
-
-import React, { Component } from 'react';
-import {
-  Platform,
-  StyleSheet,
-  Text,
-  View
-} from 'react-native';
-
-const instructions = Platform.select({
-  ios: 'Press Cmd+R to reload,\n' +
-    'Cmd+D or shake for dev menu',
-  android: 'Double tap R on your keyboard to reload,\n' +
-    'Shake or press menu button for dev menu',
-});
-
-export default class App extends Component<{}> {
-  render() {
-    return (
-      <View style={styles.container}>
-        <Text style={styles.welcome}>
-          Welcome to React Native!
-        </Text>
-        <Text style={styles.instructions}>
-          To get started, edit App.js
-        </Text>
-        <Text style={styles.instructions}>
-          {instructions}
-        </Text>
-      </View>
-    );
-  }
-}
+import React, { Component } from 'react'
+import { StyleSheet, SafeAreaView, ScrollView, Text } from 'react-native'
+import SearchBar from 'react-native-search-bar'
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'center',
-    alignItems: 'center',
     backgroundColor: '#F5FCFF',
   },
-  welcome: {
-    fontSize: 20,
+  header: {
     textAlign: 'center',
-    margin: 10,
+    margin: 15,
+    fontSize: 18,
+    fontWeight: 'bold',
   },
-  instructions: {
-    textAlign: 'center',
-    color: '#333333',
-    marginBottom: 5,
+  listItem: {
+    paddingHorizontal: 15,
+    paddingVertical: 12,
+    fontSize: 18,
+    backgroundColor: '#fff',
   },
-});
+})
+
+const items = ['Apples', 'Pie', 'Juice', 'Cake', 'Nuggets']
+
+export default class App extends Component<{}, { search: string }> {
+  state = {
+    search: '',
+  }
+
+  search1: SearchBar
+  search2: SearchBar
+
+  render() {
+    return (
+      <SafeAreaView style={styles.container}>
+        <ScrollView contentContainerStyle={{ flex: 1 }}>
+          <Text style={styles.header}>Dark Style</Text>
+          <SearchBar
+            ref={ref => (this.search1 = ref)}
+            barStyle="black"
+            onSearchButtonPress={() => this.search1.blur()}
+          />
+
+          <Text style={styles.header}>Search Example</Text>
+          <SearchBar
+            text={this.state.search}
+            ref={ref => (this.search2 = ref)}
+            onChange={e => console.log(e.nativeEvent)}
+            onChangeText={search => this.setState({ search })}
+            onSearchButtonPress={() => this.search2.blur()}
+          />
+
+          {items
+            .filter(a => a.toLowerCase().indexOf(this.state.search.toLowerCase()) !== -1)
+            .map(a => (
+              <Text style={styles.listItem} key={a}>
+                {a}
+              </Text>
+            ))}
+        </ScrollView>
+      </SafeAreaView>
+    )
+  }
+}
